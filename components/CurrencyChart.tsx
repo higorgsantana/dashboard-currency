@@ -22,6 +22,8 @@ export default function CurrencyChart() {
   const [targetCurrency, setTargetCurrency] = useState('BRL')
   const [labels, setLabels] = useState<string[]>([])
   const [values, setValues] = useState<number[]>([])
+  const [minRate, setMinRate] = useState<number | null>(null)
+  const [maxRate, setMaxRate] = useState<number | null>(null)
 
   function handleCurrencyChange(type: 'base' | 'target', newValue: string) {
     if (type === 'base') {
@@ -77,9 +79,16 @@ export default function CurrencyChart() {
     )
   }
 
+  const firstDate = labels[0]
   const lastIndex = labels.length - 1
   const lastDate = labels[lastIndex]
   const lastRate = values[lastIndex]
+  const firstRate = values[0]
+
+  const variation =
+    firstRate !== undefined && lastRate !== undefined
+      ? ((lastRate - firstRate) / firstRate) * 100
+      : undefined
 
   useEffect(() => {
     const today = new Date()
@@ -97,6 +106,9 @@ export default function CurrencyChart() {
 
         setLabels(dates)
         setValues(vals)
+
+        setMinRate(Math.min(...vals))
+        setMaxRate(Math.max(...vals))
       })
       .catch(err => {
         console.error('Erro ao carregar gráfico', err)
@@ -129,7 +141,7 @@ export default function CurrencyChart() {
   return (
     <>
       {/* Selects */}
-      <div className="flex gap-4 mb-4 flex-wrap">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
         <Select label="Período" value={period} onChange={setPeriod} options={periodOptions} />
         <Select
           label="Moeda base"
@@ -146,21 +158,52 @@ export default function CurrencyChart() {
       </div>
 
       {/* Gráfico */}
-      <div className="bg-white p-4 rounded shadow-md">
+      <div
+        className="bg-white p-6 rounded-2x1 shadow-md border border-gray-100
+        dark:bg-gray-900 dark:border-gray-700 transition-colors"
+      >
         {labels.length === 0 ? (
           <p>Carregando gráfico...</p>
         ) : (
           <>
-            {lastRate !== undefined && lastDate && (
-              <p className="text-sm text-gray-700 mb-2">
-                1 {baseCurrency} = {lastRate.toFixed(2)} {targetCurrency} (em{' '}
-                {new Date(lastDate).toLocaleDateString('pt-BR')})
-              </p>
-            )}
+            <div className="mb-4">
+              {lastRate !== undefined && lastDate && (
+                <p className="text-sm text-gray-600 mb-4 font-medium">
+                  1 {baseCurrency} = {lastRate.toFixed(2)} {targetCurrency} (em{' '}
+                  {new Date(lastDate).toLocaleDateString('pt-BR')})
+                </p>
+              )}
+
+              {variation !== undefined && (
+                <p
+                  className={`text-sm mb-4 ${
+                    variation > 0
+                      ? 'text-green-600'
+                      : variation < 0
+                        ? 'text-red-600'
+                        : 'text-gray-700'
+                  }`}
+                >
+                  Variação no período: {variation.toFixed(2)}%
+                </p>
+              )}
+            </div>
             {/* key força Chart.js a recriar quando moedas mudam */}
             <Line key={`${baseCurrency}-${targetCurrency}`} data={data} options={options} />
           </>
         )}
+      </div>
+
+      <div className="mt-4 text-sm text-gray-700 space-y-1">
+        <p>
+          Periodo exibido:{' '}
+          {firstDate && lastDate && (
+            <>
+              {new Date(firstDate).toLocaleDateString('pt-BR')} até{' '}
+              {new Date(lastDate).toLocaleDateString('pt-BR')}
+            </>
+          )}
+        </p>
       </div>
     </>
   )
