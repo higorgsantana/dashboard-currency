@@ -1,13 +1,14 @@
-import Link from "next/link";
-import Layout from "../components/Layout";
+import CurrencyChart from "../components/CurrencyChart"
 
-const IndexPage = () => (
-  <Layout title="Home | Next.js + TypeScript Example">
-    <h1>Hello Next.js 👋</h1>
-    <p>
-      <Link href="/about">About</Link>
-    </p>
-  </Layout>
-);
+export default function Home () {
+  return (
+    <main className="min-h-screen bg-gray-100 p-10">
+      <h1 className="text-3x1 font-bold mb-6">
+        Dashboard de Moedas
+      </h1>
+      <CurrencyChart/>
+    </main>
+  )
+}
 
-export default IndexPage;
+
