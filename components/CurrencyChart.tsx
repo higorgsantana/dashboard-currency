@@ -18,10 +18,9 @@ type Props = {
   baseCurrency: string
   targetCurrency: string
   period: string
-  onRemove?: () => void
 }
 
-export function CurrencyChart({ baseCurrency, targetCurrency, period, onRemove }: Props) {
+export function CurrencyChart({ baseCurrency, targetCurrency, period }: Props) {
   const [labels, setLabels] = useState<string[]>([])
   const [values, setValues] = useState<number[]>([])
   const [variation, setVariation] = useState<number | undefined>(undefined)
@@ -81,13 +80,6 @@ export function CurrencyChart({ baseCurrency, targetCurrency, period, onRemove }
       className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-md
      border border-gray-200 dark:border-gray-700 w-full max-w-2xl"
     >
-      {onRemove && (
-        <div className="flex justify-end">
-          <button onClick={onRemove} className="text-sm text-red-500 hover:underline mb-2">
-            Remover gráfico
-          </button>
-        </div>
-      )}
       {labels.length === 0 ? (
         <p>Carregando gráfico...</p>
       ) : (
