@@ -1,0 +1,99 @@
+import React, { useState } from 'react'
+import { CurrencyChart } from './CurrencyChart'
+import { Select } from './Select'
+
+const currencyOptions = [
+  { label: 'USD', value: 'USD' },
+  { label: 'BRL', value: 'BRL' },
+  { label: 'EUR', value: 'EUR' },
+  { label: 'JPY', value: 'JPY' },
+]
+
+const periodOptions = [
+  { label: '7 dias', value: '7' },
+  { label: '30 dias', value: '30' },
+  { label: '90 dias', value: '90' },
+]
+
+type CurrencyPair = {
+  base: string
+  target: string
+  period: string
+}
+
+export default function ComparisonDashboard() {
+  const [comparisons, setComparisons] = useState<CurrencyPair[]>([
+    { base: 'USD', target: 'BRL', period: '7' },
+  ])
+
+  const handleAddComparisons = () => {
+    if (comparisons.length >= 3) return
+    setComparisons(prev => [...prev, { base: 'USD', target: 'BRL', period: '7' }])
+  }
+
+  const updateComparison = (index: number, updated: Partial<CurrencyPair>) => {
+    setComparisons(prev => {
+      const newComparisons = [...prev]
+      newComparisons[index] = { ...newComparisons[index], ...updated }
+      return newComparisons
+    })
+  }
+
+  const handleRemove = (index: number) => {
+    setComparisons(prev => prev.filter((_, i) => i !== index))
+  }
+
+  return (
+    <div className="p-4 space-y-6">
+      <button
+        onClick={handleAddComparisons}
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+      >
+        + Adicionar comparação
+      </button>
+
+      {comparisons.map((pair, index) => (
+        <div key={index} className="space-y-4">
+          <div className="flex gap-4 flex-wrap">
+            <Select
+              label="Moeda Base"
+              value={pair.base}
+              options={currencyOptions}
+              onChange={newBase => {
+                if (newBase === pair.target) {
+                  updateComparison(index, { base: pair.target, target: pair.base })
+                } else {
+                  updateComparison(index, { base: newBase })
+                }
+              }}
+            />
+            <Select
+              label="Moeda Alvo"
+              value={pair.target}
+              options={currencyOptions}
+              onChange={newTarget => {
+                if (newTarget === pair.base) {
+                  updateComparison(index, { base: pair.target, target: pair.base })
+                } else {
+                  updateComparison(index, { target: newTarget })
+                }
+              }}
+            />
+            <Select
+              label="Período"
+              value={pair.period}
+              options={periodOptions}
+              onChange={value => updateComparison(index, { period: value })}
+            />
+          </div>
+          <CurrencyChart
+            baseCurrency={pair.base}
+            targetCurrency={pair.target}
+            period={pair.period}
+            onRemove={() => handleRemove(index)}
+          />
+        </div>
+      ))}
+    </div>
+  )
+}
