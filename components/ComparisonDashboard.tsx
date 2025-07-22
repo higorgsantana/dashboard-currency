@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { CurrencyChart } from './CurrencyChart'
 import { Select } from './Select'
 import { ThemeToggle } from './ThemeToggle'
@@ -23,9 +23,24 @@ type CurrencyPair = {
 }
 
 export default function ComparisonDashboard() {
-  const [comparisons, setComparisons] = useState<CurrencyPair[]>([
-    { base: 'USD', target: 'BRL', period: '7' },
-  ])
+  const [comparisons, setComparisons] = useState<CurrencyPair[]>(() => {
+    if (typeof window === 'undefined') return [{ base: 'USD', target: 'BRL', period: '7' }]
+
+    const stored = localStorage.getItem('comparisons')
+    if (stored) {
+      try {
+        return JSON.parse(stored)
+      } catch (e) {
+        console.error('Erro ao carregar comparações do localStorage', e)
+      }
+    }
+
+    return [{ base: 'USD', target: 'BRL', period: '7' }]
+  })
+
+  useEffect(() => {
+    localStorage.setItem('comparisons', JSON.stringify(comparisons))
+  }, [comparisons])
 
   const handleAddComparisons = () => {
     if (comparisons.length >= 3) return
