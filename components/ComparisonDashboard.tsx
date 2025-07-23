@@ -71,63 +71,67 @@ export default function ComparisonDashboard() {
         <ThemeToggle />
       </div>
 
-      {comparisons.map((pair, index) => (
-        <div key={index} className="space-y-4 border-t border-gray-300 dark:border-gray-700 pt-6">
-          {/* Título + Botão remover */}
-          <div className="flex justify-between items-center">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
-              Comparação {index + 1}: {pair.base}/{pair.target}
-            </h2>
-            <button
-              onClick={() => handleRemove(index)}
-              className="text-sm text-red-600 hover:underline"
-            >
-              Remover
-            </button>
-          </div>
+      <div className="flex flex-wrap gap-6">
+        {comparisons.map((pair, index) => (
+          <div key={index} className="flex-1 min-w-[350px] max-w-[600px]">
+            {/* Título + Botão remover */}
+            <div className="space-y-4 border-t border-gray-300 dark:border-gray-700 pt-6">
+              <div className="flex justify-between items-center flex-wrap gap-2">
+                <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
+                  Comparação {index + 1}: {pair.base}/{pair.target}
+                </h2>
+                <button
+                  onClick={() => handleRemove(index)}
+                  className="text-sm text-red-600 hover:underline"
+                >
+                  Remover
+                </button>
+              </div>
 
-          {/* Selects */}
-          <div className="flex gap-4 flex-wrap">
-            <Select
-              label="Moeda Base"
-              value={pair.base}
-              options={currencyOptions}
-              onChange={newBase => {
-                if (newBase === pair.target) {
-                  updateComparison(index, { base: pair.target, target: pair.base })
-                } else {
-                  updateComparison(index, { base: newBase })
-                }
-              }}
-            />
-            <Select
-              label="Moeda Alvo"
-              value={pair.target}
-              options={currencyOptions}
-              onChange={newTarget => {
-                if (newTarget === pair.base) {
-                  updateComparison(index, { base: pair.target, target: pair.base })
-                } else {
-                  updateComparison(index, { target: newTarget })
-                }
-              }}
-            />
-            <Select
-              label="Período"
-              value={pair.period}
-              options={periodOptions}
-              onChange={value => updateComparison(index, { period: value })}
-            />
-          </div>
+              {/* Selects */}
+              <div className="flex gap-4 flex-wrap">
+                <Select
+                  label="Moeda Base"
+                  value={pair.base}
+                  options={currencyOptions}
+                  onChange={newBase => {
+                    if (newBase === pair.target) {
+                      updateComparison(index, { base: pair.target, target: pair.base })
+                    } else {
+                      updateComparison(index, { base: newBase })
+                    }
+                  }}
+                />
+                <Select
+                  label="Moeda Alvo"
+                  value={pair.target}
+                  options={currencyOptions}
+                  onChange={newTarget => {
+                    if (newTarget === pair.base) {
+                      updateComparison(index, { base: pair.target, target: pair.base })
+                    } else {
+                      updateComparison(index, { target: newTarget })
+                    }
+                  }}
+                />
+                <Select
+                  label="Período"
+                  value={pair.period}
+                  options={periodOptions}
+                  onChange={value => updateComparison(index, { period: value })}
+                />
+              </div>
 
-          {/* Gráfico */}
-          <CurrencyChart
-            baseCurrency={pair.base}
-            targetCurrency={pair.target}
-            period={pair.period}
-          />
-        </div>
-      ))}
+              {/* Gráfico */}
+              <CurrencyChart
+                baseCurrency={pair.base}
+                targetCurrency={pair.target}
+                period={pair.period}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

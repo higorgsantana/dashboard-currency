@@ -81,7 +81,9 @@ export function CurrencyChart({ baseCurrency, targetCurrency, period }: Props) {
      border border-gray-200 dark:border-gray-700 w-full max-w-2xl"
     >
       {labels.length === 0 ? (
-        <p>Carregando gráfico...</p>
+        <div className="flex justify-center items-center h-48">
+          <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+        </div>
       ) : (
         <>
           <div className="mb-4 space-y-1">
