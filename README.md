@@ -2,7 +2,8 @@
 
 Dashboard interativo para visualização comparativa de moedas, com gráficos dinâmicos e tema claro/escuro.
 
-![Demo do Projeto](caminho/para/screenshot-ou-gif.gif)
+![Demo do Projeto Claro](./public/light.png)
+![Demo do Projeto Escuro](./public/dark.png)
 
 ## ✨ Funcionalidades
 
